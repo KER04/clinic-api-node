@@ -5,7 +5,7 @@ export class SpecialtyController {
   // Obtener todas las especialidades activas
   public async getAllSpecialties(req: Request, res: Response) {
     try {
-      const specialties = await Specialty.findAll({
+      const specialties = await Specialty.findAll({                                                       
         //where: { status: "ACTIVE" },
       });
       res.status(200).json({ specialties });

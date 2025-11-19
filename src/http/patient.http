@@ -6,6 +6,46 @@
 GET {{baseUrl}}/api/patient/public
 Accept: application/json
 
+### Get patient by ID
+GET {{baseUrl}}/api/patient/public/10
+
+### Create a new patient
+POST {{baseUrl}}/api/patient/public
+Content-Type: application/json
+
+{
+  "first_name": "Carlos",
+  "last_name": "Ramírez",
+  "document": "1032457896",
+  "birth_date": "1985-04-15",
+  "phone": "3004567890",
+  "email": "carlos.ramirez@example.com",
+  "address": "Calle 45 #12-34",
+  "gender": "M",
+  "status": "ACTIVE"
+}
+
+
+### Update a patient
+PUT {{baseUrl}}/api/patient/public/10
+Content-Type: application/json
+
+{
+  "first_name": "Daniel",
+  "last_name": "González",
+  "document": "1029384756",
+  "birth_date": "1990-07-21",
+  "phone": "3124567890",
+  "email": "daniel.gonzalez@example.com",
+  "address": "Calle 50 #20-55",
+  "gender": "M",
+  "status": "ACTIVE"
+}
+
+
+### Delete a patient
+DELETE {{baseUrl}}/api/patient/public/10
+
 ### Peticiones con autenticación
 GET {{baseUrl}}/api/patient
 Authorization: Bearer {{token}}

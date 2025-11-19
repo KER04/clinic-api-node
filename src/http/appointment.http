@@ -7,6 +7,42 @@
 GET {{baseUrl}}/api/appointment/public
 Accept: application/json
 
+### Create appointment
+# Peticiones sin autenticación (token no requerido)
+POST {{baseUrl}}/api/appointment/public
+Content-Type: application/json
+
+{
+  "patient_id": 23,
+  "doctor_id": 31,
+  "appointment_datetime": "2025-10-20T08:13:45.000Z",
+  "consultation_reason": "Dolor abdominal persistente desde hace 3 días.",
+  "status": "ACTIVE",
+  "observations": "Paciente con leve malestar general."
+}
+
+
+### Update appointment
+# Peticiones sin autenticación (token no requerido)
+PUT {{baseUrl}}/api/appointment/public/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "patient_id": 23,
+  "doctor_id": 31,
+  "appointment_datetime": "2025-10-22T10:30:00.000Z",
+  "consultation_reason": "Actualización: el paciente presenta mejora pero requiere revisión.",
+  "status": "ACTIVE",
+  "observations": "Se recomienda seguimiento semanal."
+}
+
+### Delete appointment
+# Peticiones sin autenticación (token no requerido)
+
+DELETE {{baseUrl}}/api/appointment/public/1
+
+
 ### Get appointment by id
 
 # Peticiones con autenticación
