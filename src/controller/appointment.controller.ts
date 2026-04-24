@@ -7,7 +7,7 @@ export class AppointmentController {
         try {
 
             const appointment: AppointmentI[] = await Appointment.findAll({
-                //where: { status: "ACTIVE" },
+                where: { status: "ACTIVE" },
             });
             res.status(200).json({ appointment });
 

@@ -7,7 +7,7 @@ export class DoctorController {
     public async getAllDoctor(req: Request, res: Response) {
         try {
             const doctors: DoctorI[] = await Doctor.findAll({
-                //where: { status: "ACTIVE" },
+                where: { status: "ACTIVE" },
             });
             res.status(200).json(doctors);
         } catch (error) {

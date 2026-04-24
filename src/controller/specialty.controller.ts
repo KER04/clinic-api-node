@@ -6,7 +6,7 @@ export class SpecialtyController {
   public async getAllSpecialties(req: Request, res: Response) {
     try {
       const specialties = await Specialty.findAll({                                                       
-        //where: { status: "ACTIVE" },
+        where: { status: "ACTIVE" },
       });
       res.status(200).json({ specialties });
     } catch (error) {
