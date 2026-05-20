@@ -3,12 +3,14 @@
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTE4MzM0LCJleHAiOjE3NjA1MjE5MzR9.n85SFa4Z8A9Wu69GKzrVLWLjy4KOy9lhb_xtxfIM9_o
 @baseUrl = http://localhost:3000
 ### List appointments
-# Peticiones sin autenticación (token no requerido)
 GET {{baseUrl}}/api/appointment/public
 Accept: application/json
 
+### Get appointment by id (public)
+GET {{baseUrl}}/api/appointment/public/1
+Accept: application/json
+
 ### Create appointment
-# Peticiones sin autenticación (token no requerido)
 POST {{baseUrl}}/api/appointment/public
 Content-Type: application/json
 
@@ -21,14 +23,11 @@ Content-Type: application/json
   "observations": "Paciente con leve malestar general."
 }
 
-
 ### Update appointment
-# Peticiones sin autenticación (token no requerido)
 PUT {{baseUrl}}/api/appointment/public/1
 Content-Type: application/json
 
 {
-  "id": 1,
   "patient_id": 23,
   "doctor_id": 31,
   "appointment_datetime": "2025-10-22T10:30:00.000Z",
@@ -38,13 +37,45 @@ Content-Type: application/json
 }
 
 ### Delete appointment
-# Peticiones sin autenticación (token no requerido)
-
 DELETE {{baseUrl}}/api/appointment/public/1
 
-
-### Get appointment by id
-
-# Peticiones con autenticación
+// Peticiones con autenticación
+### List appointments (protegido)
 GET {{baseUrl}}/api/appointment
+Authorization: Bearer {{token}}
+
+### Get appointment by id (protegido)
+GET {{baseUrl}}/api/appointment/1
+Authorization: Bearer {{token}}
+
+### Create appointment (protegido)
+POST {{baseUrl}}/api/appointment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "patient_id": 23,
+  "doctor_id": 31,
+  "appointment_datetime": "2025-10-20T08:13:45.000Z",
+  "consultation_reason": "Dolor abdominal persistente desde hace 3 días.",
+  "status": "ACTIVE",
+  "observations": "Paciente con leve malestar general."
+}
+
+### Update appointment (protegido)
+PUT {{baseUrl}}/api/appointment/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "patient_id": 23,
+  "doctor_id": 31,
+  "appointment_datetime": "2025-10-22T10:30:00.000Z",
+  "consultation_reason": "Actualización: el paciente presenta mejora pero requiere revisión.",
+  "status": "ACTIVE",
+  "observations": "Se recomienda seguimiento semanal."
+}
+
+### Delete appointment (protegido)
+DELETE {{baseUrl}}/api/appointment/1
 Authorization: Bearer {{token}}

@@ -8,13 +8,13 @@ export interface PrescriptionI {
   doctor_id: number;
   issue_date: Date;
   general_instructions?: string;
-  status: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido: era "iNACTIVE"
+  status: "ACTIVE" | "INACTIVE"; 
 }
 
 export class Prescription extends Model {
   
   public id!: number;
-  public appointment_id!: number; // ⚠️ Agregado: faltaba en la clase
+  public appointment_id!: number; 
   public doctor_id!: number;
   public issue_date!: Date;
   public general_instructions?: string;

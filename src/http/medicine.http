@@ -2,12 +2,49 @@
 # Base URL: http://localhost:3000/medicines
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTE4MzM0LCJleHAiOjE3NjA1MjE5MzR9.n85SFa4Z8A9Wu69GKzrVLWLjy4KOy9lhb_xtxfIM9_o
 @baseUrl = http://localhost:3000
-### List medicines
+### Get all medicines (public)
 GET {{baseUrl}}/api/medicine/public
 Accept: application/json
 
-### Get medicine by id
+### Get medicine by id (public)
+GET {{baseUrl}}/api/medicine/public/1
+Accept: application/json
+
+### Create medicine
+POST {{baseUrl}}/api/medicine/public
+Content-Type: application/json
+
+{
+    "commercial_name": "Ibuprofeno 400",
+    "generic_name": "Ibuprofeno",
+    "concentration": "400mg",
+    "pharmaceutical_form": "Tableta",
+    "laboratory": "Genfar",
+    "unit_price": "12500.00"
+}
+
+### Update medicine
+PUT {{baseUrl}}/api/medicine/public/1
+Content-Type: application/json
+
+{
+    "commercial_name": "Ibuprofeno 400",
+    "generic_name": "Ibuprofeno",
+    "concentration": "400mg",
+    "pharmaceutical_form": "Tableta",
+    "laboratory": "Genfar",
+    "unit_price": "12500.00"
+}
+
+### Delete medicine (soft delete)
+DELETE {{baseUrl}}/api/medicine/public/1
+Accept: application/json
 
 // Peticiones con autenticación
+### Get all medicines (privado)
 GET {{baseUrl}}/api/medicine
+Authorization: Bearer {{token}}
+
+### Get medicine by id (privado)
+GET {{baseUrl}}/api/medicine/1
 Authorization: Bearer {{token}}

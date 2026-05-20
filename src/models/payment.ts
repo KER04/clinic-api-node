@@ -85,7 +85,7 @@ Payment.init(
       }
     },
     payment_status: {
-      type: DataTypes.ENUM("PENDIENTE", "COMPLETADO", "FALLIDO"), // ⚠️ Corregido para coincidir con la interface
+      type: DataTypes.ENUM("PENDIENTE", "COMPLETADO", "FALLIDO"), 
       allowNull: false,
       defaultValue: "PENDIENTE",
     },

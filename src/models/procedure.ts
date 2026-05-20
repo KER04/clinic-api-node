@@ -9,19 +9,19 @@ export interface ProcedureI {
   description?: string;
   cost: number;
   performed_date: Date;
-  status: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido: era "iNACTIVE"
+  status: "ACTIVE" | "INACTIVE"; 
 }
 
 export class Procedure extends Model {
   
   public id!: number;
-  public appointment_id!: number; // ⚠️ Agregado: faltaba en la clase
+  public appointment_id!: number; 
   public procedure_code?: string;
   public procedure_name!: string;
   public description?: string;
   public cost!: number;
   public performed_date!: Date;
-  public status!: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido
+  public status!: "ACTIVE" | "INACTIVE"; 
 }
 
 Procedure.init(

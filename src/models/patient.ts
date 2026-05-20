@@ -21,9 +21,9 @@ export class Patient extends Model {
   public last_name!: string;
   public document!: string;
   public birth_date!: Date;
-  public phone?: string; // ⚠️ Corregido: debe ser opcional
-  public email?: string; // ⚠️ Corregido: debe ser opcional
-  public address?: string; // ⚠️ Corregido: debe ser opcional
+  public phone?: string; 
+  public email?: string; 
+  public address?: string; 
   public gender!: "M" | "F";
   public status!: "ACTIVE" | "INACTIVE";
 }
@@ -89,7 +89,7 @@ Patient.init(
       allowNull: true,
     },
     gender: {
-      type: DataTypes.ENUM("M", "F"), // ⚠️ Corregido: debe coincidir con la interface
+      type: DataTypes.ENUM("M", "F"), 
       allowNull: false,
       validate: {
         isIn: { args: [["M", "F"]], msg: "El género debe ser M o F" }

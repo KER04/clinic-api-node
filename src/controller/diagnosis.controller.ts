@@ -9,7 +9,69 @@ export class DiagnosisController {
             });
             res.status(200).json({ diagnosis });
         } catch (error) {
-            res.status(200).json({ error: "error al mostrar diagnosticos" });
+            res.status(500).json({ error: "Error al mostrar diagnosticos" });
+        }
+    }
+
+    public async getDiagnosisById(req: Request, res: Response) {
+        const { id } = req.params;
+        try {
+            const diagnosis: DiagnosisI | null = await Diagnosis.findOne({
+                where: { id, status: "ACTIVE" }
+            });
+            if (!diagnosis) {
+                return res.status(404).json({ error: 'Diagnostico no encontrado' });
+            }
+            res.status(200).json({ diagnosis });
+        } catch (error) {
+            res.status(500).json({ error: 'Error al mostrar diagnostico' });
+        }
+    }
+
+    public async createDiagnosis(req: Request, res: Response) {
+        const { body } = req;
+        try {
+            const diagnosis: DiagnosisI = await Diagnosis.create({
+                ...body,
+                status: "ACTIVE"
+            });
+            res.status(201).json({ diagnosis });
+        } catch (error) {
+            res.status(500).json({ error: 'Error al crear diagnostico' });
+        }
+    }
+
+    public async updateDiagnosis(req: Request, res: Response) {
+        const { id } = req.params;
+        const { body } = req;
+        try {
+            const diagnosis: DiagnosisI | null = await Diagnosis.findOne({
+                where: { id, status: "ACTIVE" }
+            });
+            if (!diagnosis) {
+                return res.status(404).json({ error: 'Diagnostico no encontrado' });
+            }
+            await Diagnosis.update(body, { where: { id } });
+            const updated: DiagnosisI | null = await Diagnosis.findOne({ where: { id } });
+            res.status(200).json({ diagnosis: updated });
+        } catch (error) {
+            res.status(500).json({ error: 'Error al actualizar diagnostico' });
+        }
+    }
+
+    public async deleteDiagnosis(req: Request, res: Response) {
+        const { id } = req.params;
+        try {
+            const diagnosis: DiagnosisI | null = await Diagnosis.findOne({
+                where: { id, status: "ACTIVE" }
+            });
+            if (!diagnosis) {
+                return res.status(404).json({ error: 'Diagnostico no encontrado' });
+            }
+            await Diagnosis.update({ status: "INACTIVE" }, { where: { id } });
+            res.status(200).json({ message: 'Diagnostico eliminado correctamente' });
+        } catch (error) {
+            res.status(500).json({ error: 'Error al eliminar diagnostico' });
         }
     }
 

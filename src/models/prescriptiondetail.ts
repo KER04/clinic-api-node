@@ -9,19 +9,18 @@ export interface PrescriptionDetailI {
   dosage: string;
   treatment_days: number;
   special_instructions?: string;
-  status: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido: era "ACTIVE | INACTIVE" (sin comillas internas)
+  status: "ACTIVE" | "INACTIVE"; 
 }
 
 export class PrescriptionDetail extends Model{
   
   public id!: number;
-  public prescription_id!: number; // ⚠️ Agregado: faltaba en la clase
-  public medicine_id!: number; // ⚠️ Agregado: faltaba en la clase
+  public prescription_id!: number; 
+  public medicine_id!: number; 
   public quantity!: number;
   public dosage!: string;
   public treatment_days!: number;
   public special_instructions?: string;
-  public status!: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido
 }
 
 PrescriptionDetail.init(

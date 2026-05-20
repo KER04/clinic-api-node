@@ -12,7 +12,7 @@ export interface DoctorI {
   email?: string;
   medical_license: string;
   specialty_id: number;
-  status: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido: era "ACTIVE | INACTIVE" (sin comillas internas)
+  status: "ACTIVE" | "INACTIVE"; 
 }
 
 export class Doctor extends Model {
@@ -25,7 +25,7 @@ export class Doctor extends Model {
   public email?: string;
   public medical_license!: string;
   public specialty_id!: number;
-  public status!: "ACTIVE" | "INACTIVE"; // ⚠️ Corregido
+  public status!: "ACTIVE" | "INACTIVE"; 
 }
 
 Doctor.init(
@@ -85,8 +85,7 @@ Doctor.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'specialties', // ⚠️ Mejor usar string del nombre de tabla
-        key: 'id'
+        model: 'specialties', 
       },
       onUpdate: 'CASCADE',
       onDelete: 'RESTRICT' // No se puede borrar una especialidad si tiene doctores

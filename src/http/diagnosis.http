@@ -7,7 +7,37 @@
 GET {{baseUrl}}/api/diagnosis/public
 Accept: application/json
 
-### Get diagnosis by id
+### Create diagnosis
+POST {{baseUrl}}/api/diagnosis/public
+Content-Type: application/json
+
+{
+    "patient_id": 40,
+    "appointment_id": 46,
+    "icd10_code": null,
+    "description": "Dolor abdominal persistente desde hace 3 días.",
+    "diagnosis_date": "2026-05-19",
+    "observations": null
+}
+
+
+
+### Update diagnosis
+PUT {{baseUrl}}/api/diagnosis/public/51
+Content-Type: application/json
+
+{
+
+  "patient_id": 40,
+  "appointment_id": 46,
+  "icd10_code": null,
+  "description": "Paciente presenta mejora pero requiere revision.",
+  "diagnosis_date": "2026-05-20",
+  "observations": "Se recomienda control en 15 dias."
+  
+}
+
+
 
 
 // Peticiones con autenticación
