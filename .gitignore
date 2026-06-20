@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+
+# Build / compilado
+dist/
+
+# Variables de entorno (sensible: credenciales, DB, API keys)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Coverage / testing
+coverage/
+
+# Opcional: si manual.md es solo para ti y no para el equipo
+manual.md
