@@ -1,5 +1,3 @@
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzYwNDE1MDIzLCJleHAiOjE3NjA0MTg2MjN9.q95Wi_Ne6cKYPLS2T_Xp-jOaeGqaHRom80FZUIK3YgU
 
 
 ### ================== RUTAS SIN AUTENTICACIÓN ==================
@@ -40,15 +38,15 @@ DELETE {{baseUrl}}/api/resources/public/2/logic
 
 ### Obtener todos los recursos (CON token)
 GET {{baseUrl}}/api/resources
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Obtener recurso por ID (CON token)
 GET {{baseUrl}}/api/resources/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Crear un nuevo recurso (CON token)
 POST {{baseUrl}}/api/resources
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -59,7 +57,7 @@ Content-Type: application/json
 
 ### Actualizar un recurso (CON token)
 PATCH {{baseUrl}}/api/resources/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -70,8 +68,8 @@ Content-Type: application/json
 
 ### Eliminar un recurso físicamente (CON token)
 DELETE {{baseUrl}}/api/resources/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Eliminar un recurso lógicamente (CON token)
 DELETE {{baseUrl}}/api/resources/1/logic
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}

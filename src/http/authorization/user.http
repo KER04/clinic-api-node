@@ -1,7 +1,4 @@
 
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
 ### Esto es solo como ejemplo academico, dado que este modelo lo debemos manejar posteriormente con Auth
 ### ================== RUTAS SIN AUTENTICACIÓN ==================
 

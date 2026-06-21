@@ -1,7 +1,4 @@
-### Patient HTTP requests
-# Base URL: http://localhost:3000/patients
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzYwNTE4MTcyLCJleHAiOjE3NjA1MjE3NzJ9.H0yN8ZAvrIlr1SUpWOWpTb5Yh0g_aQszC8Hpx8M478I
-@baseUrl = http://localhost:3000
+
 ### List patients
 GET {{baseUrl}}/api/patient/public
 Accept: application/json
@@ -48,4 +45,4 @@ DELETE {{baseUrl}}/api/patient/public/10
 
 ### Peticiones con autenticación
 GET {{baseUrl}}/api/patient
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}

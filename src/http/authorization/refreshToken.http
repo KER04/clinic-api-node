@@ -1,7 +1,5 @@
 ### refreshToken.http
 
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### ================== RUTAS SIN AUTENTICACIÓN ==================
 

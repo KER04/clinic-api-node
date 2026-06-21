@@ -1,11 +1,8 @@
-### Payment HTTP requests
-# Base URL: http://localhost:3000/payments
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTA5MzA0LCJleHAiOjE3NjA1MTI5MDR9.Gpyq0iGd8qu7nPSpQ_pyVICJCRZSct4fXxUOn0mGjTI
-@baseUrl = http://localhost:3000
+
 ### List payments
 GET {{baseUrl}}/api/payment/public
 Accept: application/json
 
 ### Get payment by id
 GET {{baseUrl}}/api/payment
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}

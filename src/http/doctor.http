@@ -1,8 +1,4 @@
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTE4MzM0LCJleHAiOjE3NjA1MjE5MzR9.n85SFa4Z8A9Wu69GKzrVLWLjy4KOy9lhb_xtxfIM9_o
-
-@baseUrl = http://localhost:3000
-
 ### Listar todos los doctores
 GET {{baseUrl}}/api/doctor/public
 Accept: application/json
@@ -36,16 +32,16 @@ Content-Type: application/json
 ### Peticiones con autenticación
 ///mostrar todos los doctores (con autenticación)
 GET {{baseUrl}}/api/doctor
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### mostrar un doctor por ID (con autenticación)
 GET {{baseUrl}}/api/doctor/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ###crear un nuevo doctor (con autenticación)
 
 POST {{baseUrl}}/api/doctor
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -61,7 +57,7 @@ Content-Type: application/json
 
 ### actualizar un doctor (con autenticación)
 PUT {{baseUrl}}/api/doctor/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -77,7 +73,7 @@ Content-Type: application/json
 
 ### eliminar un doctor (cambia estado a INACTIVE) (con autenticación)
 DELETE {{baseUrl}}/api/doctor/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
 

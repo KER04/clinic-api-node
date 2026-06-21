@@ -1,6 +1,4 @@
 
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTEwNTgxLCJleHAiOjE3NjA1MTQxODF9.qY9nC80914aV-vkJ3Qx33v5p-N5GrO_E0OFk5zTCrag5cCI6IkpXVCJ9...
 
 ### ================== RUTAS SIN AUTENTICACIÓN ==================
 

@@ -1,7 +1,4 @@
-### Procedure HTTP requests
-# Base URL: http://localhost:3000/procedures
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTA5MzA0LCJleHAiOjE3NjA1MTI5MDR9.Gpyq0iGd8qu7nPSpQ_pyVICJCRZSct4fXxUOn0mGjTI
-@baseUrl = http://localhost:3000
+
 
 // Peticiones sin autenticación
 ### Obtener todos los procedimientos (público)
@@ -14,7 +11,7 @@ Accept: application/json
 
 ### Crear un nuevo procedimiento (publico)
 POST {{baseUrl}}/api/procedure/public
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -29,7 +26,7 @@ Content-Type: application/json
 
 ### Actualizar un procedimiento
 PUT {{baseUrl}}/api/procedure/public/21
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -44,22 +41,22 @@ Content-Type: application/json
 
 ### Eliminar un procedimiento (cambia estado a INACTIVE)
 DELETE {{baseUrl}}/api/procedure/public/21
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
 
 // Peticiones con autenticación
 ###
 GET {{baseUrl}}/api/procedure
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Obtener procedimiento por ID (con autenticación)
 GET {{baseUrl}}/api/procedure/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Crear un nuevo procedimiento (con autenticación)
 POST {{baseUrl}}/api/procedure
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -74,7 +71,7 @@ Content-Type: application/json
 
 ### Actualizar un procedimiento (con autenticación)
 PUT {{baseUrl}}/api/procedure/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -89,5 +86,5 @@ Content-Type: application/json
 
 ### Eliminar un procedimiento (cambia estado a INACTIVE) (con autenticación)
 DELETE {{baseUrl}}/api/procedure/21
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json

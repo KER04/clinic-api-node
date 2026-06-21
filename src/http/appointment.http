@@ -1,7 +1,4 @@
-### Appointment HTTP requests
-#Base URL: http://localhost:3000/appointments
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTE4MzM0LCJleHAiOjE3NjA1MjE5MzR9.n85SFa4Z8A9Wu69GKzrVLWLjy4KOy9lhb_xtxfIM9_o
-@baseUrl = http://localhost:3000
+
 ### List appointments
 GET {{baseUrl}}/api/appointment/public
 Accept: application/json
@@ -42,15 +39,15 @@ DELETE {{baseUrl}}/api/appointment/public/1
 // Peticiones con autenticación
 ### List appointments (protegido)
 GET {{baseUrl}}/api/appointment
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Get appointment by id (protegido)
 GET {{baseUrl}}/api/appointment/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Create appointment (protegido)
 POST {{baseUrl}}/api/appointment
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -64,7 +61,7 @@ Content-Type: application/json
 
 ### Update appointment (protegido)
 PUT {{baseUrl}}/api/appointment/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -78,4 +75,4 @@ Content-Type: application/json
 
 ### Delete appointment (protegido)
 DELETE {{baseUrl}}/api/appointment/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}

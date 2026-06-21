@@ -1,8 +1,7 @@
 ### Diagnosis HTTP requests
 # Base URL: http://localhost:3000/diagnoses
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYwNTE4MzM0LCJleHAiOjE3NjA1MjE5MzR9.n85SFa4Z8A9Wu69GKzrVLWLjy4KOy9lhb_xtxfIM9_o
-@baseUrl = http://localhost:3000
+
 ### List diagnoses
 GET {{baseUrl}}/api/diagnosis/public
 Accept: application/json
@@ -43,4 +42,4 @@ Content-Type: application/json
 // Peticiones con autenticación
 
 GET {{baseUrl}}/api/diagnosis
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}

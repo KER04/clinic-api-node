@@ -1,5 +1,4 @@
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzYwNTE4MTcyLCJleHAiOjE3NjA1MjE3NzJ9.H0yN8ZAvrIlr1SUpWOWpTb5Yh0g_aQszC8Hpx8M478I 
-@baseUrl = http://localhost:3000
+
 
 # Listar todas las especialidades
 GET {{baseUrl}}/api/specialty/public
@@ -38,15 +37,15 @@ Content-Type: application/json
 
 ### mostrar todas las especialidades (con auth)
 GET {{baseUrl}}/api/specialty
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Obtener una especialidad por ID (con auth)
 GET {{baseUrl}}/api/specialty/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Crear una nueva especialidad (con auth)
 POST {{baseUrl}}/api/specialty
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -57,7 +56,7 @@ Content-Type: application/json
 
 ### Actualizar una especialidad (con auth)
 PUT {{baseUrl}}/api/specialty/12
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -68,4 +67,4 @@ Content-Type: application/json
 
 ### Eliminar una especialidad logicamente (con auth)
 DELETE {{baseUrl}}/api/specialty/12
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}

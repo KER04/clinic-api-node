@@ -1,6 +1,3 @@
-### roleUser.http
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzYwNTAxMzExLCJleHAiOjE3NjA1MDQ5MTF9.6TxM5y4Im-UCEHiTmDhFLyK6iY1PBPGKroZpH5gq9K0
 
 ### ================== RUTAS SIN AUTENTICACIÓN ==================
 
@@ -40,15 +37,15 @@ DELETE {{baseUrl}}/api/roleUsers/public/2/logic
 
 ### Obtener todos los roles de usuario (CON token)
 GET {{baseUrl}}/api/roleUsers
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Obtener rol de usuario por ID (CON token)
 GET {{baseUrl}}/api/roleUsers/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Crear un nuevo rol de usuario (CON token)
 POST {{baseUrl}}/api/roleUsers
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -59,7 +56,7 @@ Content-Type: application/json
 
 ### Actualizar un rol de usuario (CON token)
 PATCH {{baseUrl}}/api/roleUsers/2
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 
 {
@@ -70,8 +67,8 @@ Content-Type: application/json
 
 ### Eliminar un rol de usuario físicamente (CON token)
 DELETE {{baseUrl}}/api/roleUsers/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
 
 ### Eliminar un rol de usuario lógicamente (CON token)
 DELETE {{baseUrl}}/api/roleUsers/1/logic
-Authorization: Bearer {{token}}
+Authorization: Bearer {{$dotenv TOKEN}}
