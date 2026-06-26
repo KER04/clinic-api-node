@@ -1,62 +1,111 @@
-# 🏥 Backend IPS — API REST
+# Backend IPS — API REST
 
-API REST para la gestión integral de una **Institución Prestadora de Salud (IPS)**, desarrollada con **Node.js**, **TypeScript**, **Express** y **Sequelize**. Incluye autenticación JWT y control de acceso basado en roles (RBAC).
+API REST para la gestión integral de una **Institución Prestadora de Salud (IPS)**, desarrollada con **Node.js**, **TypeScript**, **Express** y **Sequelize ORM**. Incluye autenticación JWT con refresh tokens y control de acceso basado en roles (RBAC) dinámico.
+
+> Proyecto académico — Universidad de La Guajira, Ingeniería de Sistemas.
 
 ---
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 | Categoría | Tecnología |
-|-----------|-----------|
+|---|---|
 | Runtime | Node.js |
-| Lenguaje | TypeScript |
-| Framework | Express |
-| ORM | Sequelize |
+| Lenguaje | TypeScript 5 |
+| Framework | Express 5 |
+| ORM | Sequelize 6 |
 | Base de datos | MySQL (también soporta PostgreSQL y Oracle) |
-| Autenticación | JSON Web Tokens (JWT) + Refresh Tokens |
-| Seguridad | bcryptjs, RBAC |
-| Utilitarios | dotenv, cors, morgan |
+| Autenticación | JWT (access token 60 min) + Refresh Tokens |
+| Seguridad | bcryptjs, RBAC dinámico con path-to-regexp |
+| Utilitarios | dotenv, cors, morgan, faker.js (seed) |
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 backend_node/
 ├── src/
-│   ├── server.ts               # Punto de entrada
+│   ├── server.ts                    # Punto de entrada
 │   ├── config/
-│   │   └── index.ts            # Configuración de Express, middlewares y rutas
+│   │   └── index.ts                 # Clase App: Express, middlewares, rutas, DB
 │   ├── database/
-│   │   └── db.ts               # Configuración de Sequelize
-│   ├── routes/
-│   │   ├── index.ts            # Registro central de rutas
+│   │   └── db.ts                    # Instancia de Sequelize
+│   ├── middleware/
+│   │   └── auth.ts                  # Validación JWT + autorización RBAC
+│   ├── models/
+│   │   ├── index.ts                 # Relaciones entre modelos de dominio
 │   │   ├── doctor.ts
 │   │   ├── patient.ts
 │   │   ├── appointment.ts
 │   │   ├── specialty.ts
 │   │   ├── diagnosis.ts
 │   │   ├── medicine.ts
+│   │   ├── prescription.ts
+│   │   ├── prescriptiondetail.ts
+│   │   ├── procedure.ts
 │   │   ├── payment.ts
-│   │   ├── prescriptions.ts
+│   │   └── authorization/
+│   │       ├── user.ts
+│   │       ├── role.ts
+│   │       ├── resource.ts
+│   │       ├── RoleUser.ts
+│   │       ├── ResourceRole.ts
+│   │       ├── RefreshToken.ts
+│   │       └── relation.ts          # Relaciones entre modelos de autorización
+│   ├── controller/
+│   │   ├── doctor.controller.ts
+│   │   ├── patient.controller.ts
+│   │   ├── appointment.controller.ts
+│   │   ├── specialty.controller.ts
+│   │   ├── diagnosis.controller.ts
+│   │   ├── medicine.controller.ts
+│   │   ├── prescription.controller.ts
+│   │   ├── prescriptionDetail.controller.ts
+│   │   ├── procedure.controller.ts
+│   │   ├── payment.controller.ts
+│   │   └── Authorization/
+│   │       ├── auth.controller.ts
+│   │       ├── user.controller.ts
+│   │       ├── role.controller.ts
+│   │       ├── resource.controller.ts
+│   │       ├── role_user.controller.ts
+│   │       ├── resourceRole.controller.ts
+│   │       └── refresh_token.controller.ts
+│   ├── routes/
+│   │   ├── index.ts                 # Registro central de rutas
+│   │   ├── doctor.ts
+│   │   ├── patient.ts
+│   │   ├── appointment.ts
+│   │   ├── specialty.ts
+│   │   ├── diagnosis.ts
+│   │   ├── medicine.ts
+│   │   ├── prescription.ts
 │   │   ├── prescriptionDetail.ts
 │   │   ├── procedure.ts
+│   │   ├── payment.ts
 │   │   └── authorization/
 │   │       ├── auth.ts
 │   │       ├── user.ts
 │   │       ├── role.ts
 │   │       ├── resource.ts
-│   │       ├── roleUser.ts
+│   │       ├── role_user.ts
 │   │       ├── resourceRole.ts
 │   │       └── refresh_token.ts
-│   ├── controller/             # Lógica de negocio por entidad
-│   ├── models/                 # Modelos Sequelize
-│   ├── middleware/
-│   │   └── auth.ts             # Validación JWT + RBAC
-│   ├── http/                   # Archivos .http para pruebas de endpoints
-│   └── populate_data.ts        # Script para generar datos de prueba (faker)
-├── .env                        # Variables de entorno (no subir al repositorio)
-├── .gitignore
+│   ├── faker/
+│   │   └── populate_data.ts         # Script para generar datos de prueba
+│   ├── scripts/
+│   │   └── syncRoleUser.ts
+│   └── http/                        # Archivos .http para REST Client de VS Code
+│       ├── doctor.http
+│       ├── patient.http
+│       ├── appointment.http
+│       └── authorization/
+│           ├── auth.http
+│           ├── user.http
+│           └── ...
+├── dist/                            # Salida compilada (generada por `npm run build`)
+├── .env                             # Variables de entorno (no subir al repositorio)
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -64,7 +113,7 @@ backend_node/
 
 ---
 
-## ⚙️ Instalación y configuración
+## Instalación y configuración
 
 ### 1. Clonar el repositorio
 
@@ -84,31 +133,34 @@ npm install
 Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
-PORT=3000
+# Servidor
+PORT=4000
 
+# Base de datos (MySQL)
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
-DB_PASS=
+DB_PASS=tu_contraseña
 DB_NAME=ips_db
 DB_TIMEZONE=America/Bogota
 
-JWT_SECRET=tu_secreto_seguro_aqui
+# JWT — usa un string largo y aleatorio, nunca 'secret'
+JWT_SECRET=cambia_esto_por_un_secreto_seguro_de_al_menos_32_caracteres
 ```
 
-> **⚠️ Importante:** Nunca subas el archivo `.env` al repositorio. Asegúrate de que está incluido en `.gitignore`.
+> **Importante:** Nunca subas `.env` al repositorio. Asegúrate de que está en `.gitignore`.
 
-### 4. Crear la base de datos
+### 4. Crear la base de datos en MySQL
 
 ```sql
-CREATE DATABASE ips_db;
+CREATE DATABASE ips_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Sequelize sincronizará automáticamente las tablas al iniciar el servidor en modo desarrollo.
+Sequelize sincronizará automáticamente las tablas al iniciar el servidor.
 
 ---
 
-## 🚀 Uso
+## Uso
 
 ### Modo desarrollo
 
@@ -116,99 +168,102 @@ Sequelize sincronizará automáticamente las tablas al iniciar el servidor en mo
 npm run dev
 ```
 
-Usa `nodemon` con `ts-node` para recargar automáticamente al guardar cambios.
+Usa `nodemon` + `ts-node` para recargar automáticamente al guardar cambios.
 
 ### Compilar para producción
 
 ```bash
 npm run build
+node dist/server.js
 ```
 
-Genera los archivos JavaScript en la carpeta `dist/`.
-
-> **Nota:** No existe un script `start` en `package.json`. Para producción, ejecuta directamente `node dist/server.js` tras compilar.
+> El script `start` no está definido en `package.json`. Tras compilar, ejecuta `node dist/server.js` directamente, o configura un gestor de procesos como PM2.
 
 ---
 
-## 🔐 Autenticación y autorización
+## Autenticación y autorización
 
-El sistema implementa autenticación mediante **JWT** y autorización con **RBAC** (Role-Based Access Control).
+El sistema implementa autenticación con **JWT** y autorización con **RBAC dinámico** (Role-Based Access Control).
 
 ### Flujo de autenticación
 
-1. El cliente hace `POST /api/login` con sus credenciales.
-2. El servidor devuelve un `accessToken` y un `refreshToken`.
-3. Las rutas protegidas requieren el header:
-   ```
-   Authorization: Bearer <accessToken>
-   ```
-4. Cuando el `accessToken` expira, usa `GET /refresk-token` para renovarlo.
+```
+1. POST /api/login        → recibe email + password
+2. Servidor devuelve      → { user, token (60 min), refreshToken (5 min) }
+3. Rutas protegidas       → Header: Authorization: Bearer <token>
+4. Token expirado         → GET /refresh-token con el refreshToken
+```
 
-### Middleware de validación
+### Cómo funciona el RBAC
 
-El middleware `auth.ts` verifica en cada petición protegida:
-- Que el token JWT sea válido y esté firmado con `JWT_SECRET`.
-- Que el usuario esté activo en la base de datos.
-- Que el usuario tenga permisos RBAC para la ruta y método HTTP solicitados.
+El middleware `auth.ts` valida en cada petición protegida:
+
+1. Que el JWT sea válido y firmado con `JWT_SECRET`
+2. Que el usuario exista en BD y esté en estado `ACTIVE`
+3. Que exista un `Resource` activo que coincida con la ruta y el método HTTP (usando `path-to-regexp`)
+4. Que el usuario tenga un `Role` asignado que tenga acceso a ese `Resource`
+
+Esto permite controlar permisos granulares por ruta y método, directamente desde la base de datos, sin reiniciar el servidor.
 
 ### Modelos de seguridad
 
-| Modelo | Descripción |
-|--------|-------------|
-| `User` | Usuarios del sistema |
-| `Role` | Roles disponibles |
-| `Resource` | Recursos/rutas protegidas |
-| `RoleUser` | Asignación de roles a usuarios |
-| `ResourceRole` | Permisos de roles sobre recursos |
-| `RefreshToken` | Tokens de refresco almacenados |
+| Modelo | Tabla | Descripción |
+|---|---|---|
+| `User` | `users` | Usuarios del sistema (email único, password hasheado con bcrypt) |
+| `Role` | `roles` | Roles del sistema (ej: ADMIN, DOCTOR, RECEPCIONISTA) |
+| `Resource` | `resources` | Rutas + método HTTP protegidas (ej: `GET /api/doctor/:id`) |
+| `RoleUser` | `role_users` | Tabla pivot — asignación de roles a usuarios |
+| `ResourceRole` | `resource_roles` | Tabla pivot — permisos de roles sobre recursos |
+| `RefreshToken` | `refresh_tokens` | Tokens de refresco almacenados por usuario |
 
 ---
 
-## 📡 Endpoints
+## Endpoints
 
-### Autenticación pública
+### Autenticación (pública)
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
+|---|---|---|
 | `POST` | `/api/register` | Registro de nuevo usuario |
-| `POST` | `/api/login` | Inicio de sesión |
-| `GET` | `/refresk-token` | Renovar access token |
-
-> **Nota:** La ruta de refresh token tiene un typo intencional del código fuente (`refresk` en lugar de `refresh`).
+| `POST` | `/api/login` | Inicio de sesión — devuelve token + refreshToken |
+| `GET` | `/refresh-token` | Renueva el access token usando el refreshToken |
 
 ### Patrón de rutas por módulo
 
-Cada entidad expone rutas públicas (sin autenticación) y rutas protegidas (requieren JWT + RBAC):
+Cada módulo de dominio expone dos grupos de rutas:
 
 ```
-GET    /api/<recurso>/public        → Listar todos (público)
-GET    /api/<recurso>/public/:id    → Obtener por ID (público)
-GET    /api/<recurso>               → Listar todos (protegido)
-GET    /api/<recurso>/:id           → Obtener por ID (protegido)
-POST   /api/<recurso>               → Crear (protegido)
-PUT    /api/<recurso>/:id           → Actualizar (protegido)
-DELETE /api/<recurso>/:id           → Eliminar (protegido)
+# Rutas públicas (sin autenticación)
+GET    /api/<recurso>/public        → Listar todos
+GET    /api/<recurso>/public/:id    → Obtener por ID
+
+# Rutas protegidas (requieren JWT + RBAC)
+GET    /api/<recurso>               → Listar todos
+GET    /api/<recurso>/:id           → Obtener por ID
+POST   /api/<recurso>               → Crear
+PUT    /api/<recurso>/:id           → Actualizar
+DELETE /api/<recurso>/:id           → Eliminar (soft delete → INACTIVE)
 ```
 
-### Módulos disponibles
+### Módulos de dominio
+
+| Módulo | Ruta base | Descripción |
+|---|---|---|
+| Médicos | `/api/doctor` | CRUD de médicos, vinculados a una especialidad |
+| Pacientes | `/api/patient` | CRUD de pacientes |
+| Citas médicas | `/api/appointment` | Gestión de citas (doctor + paciente + fecha) |
+| Especialidades | `/api/specialty` | Catálogo de especialidades médicas |
+| Diagnósticos | `/api/diagnosis` | Diagnósticos asociados a citas y pacientes |
+| Medicamentos | `/api/medicine` | Catálogo de medicamentos con precio y presentación |
+| Prescripciones | `/api/prescriptions` | Recetas médicas emitidas por un doctor en una cita |
+| Detalle de prescripción | `/api/prescriptionDetail` | Medicamentos incluidos en una prescripción |
+| Procedimientos | `/api/procedure` | Procedimientos médicos realizados en una cita |
+| Pagos | `/api/payment` | Pagos asociados a citas (efectivo, tarjeta, transferencia) |
+
+### Módulos de autorización
 
 | Módulo | Ruta base |
-|--------|-----------|
-| Médicos | `/api/doctor` |
-| Pacientes | `/api/patient` |
-| Citas médicas | `/api/appointment` |
-| Especialidades | `/api/specialty` |
-| Diagnósticos | `/api/diagnosis` |
-| Medicamentos | `/api/medicine` |
-| Pagos | `/api/payment` |
-| Prescripciones | `/api/prescriptions` |
-| Detalle de prescripciones | `/api/prescriptionDetail` |
-| Procedimientos | `/api/procedure` |
-
-### Módulos de autorización (protegidos)
-
-| Módulo | Ruta base |
-|--------|-----------|
+|---|---|
 | Usuarios | `/api/users` |
 | Roles | `/api/roles` |
 | Recursos | `/api/resources` |
@@ -217,51 +272,98 @@ DELETE /api/<recurso>/:id           → Eliminar (protegido)
 
 ---
 
-## 🗄️ Base de datos
+## Modelo de datos
 
-El proyecto está configurado para **MySQL** por defecto. Sin embargo, incluye drivers para otras bases de datos:
-
-| Base de datos | Driver | Estado |
-|---------------|--------|--------|
-| MySQL | `mysql2` | ✅ Configurado por defecto |
-| PostgreSQL | `pg`, `pg-hstore` | ⚙️ Disponible (requiere ajuste en `db.ts`) |
-| Oracle | `oracledb` | ⚙️ Disponible (requiere ajuste en `db.ts`) |
-
-Para cambiar el dialecto, modifica la configuración en `src/database/db.ts`.
-
----
-
-## 🧪 Datos de prueba
-
-El proyecto incluye un script para poblar la base de datos con datos ficticios usando **Faker**:
-
-```bash
-npx ts-node src/populate_data.ts
+```
+Specialty ──< Doctor ──< Appointment >── Patient
+                              │
+              ┌───────────────┼───────────────────┐
+              │               │                   │
+           Diagnosis      Procedure           Prescription ──< PrescriptionDetail >── Medicine
+                                                  │
+                                               Payment
 ```
 
-También puedes probar los endpoints directamente con los archivos `.http` incluidos en la carpeta `src/http/`, compatibles con la extensión **REST Client** de VS Code.
+### Relaciones principales
+
+- Una `Specialty` tiene muchos `Doctor`
+- Un `Doctor` y un `Patient` tienen muchas `Appointment`
+- Una `Appointment` puede tener muchos `Diagnosis`, `Procedure`, `Prescription` y un `Payment`
+- Una `Prescription` tiene muchos `PrescriptionDetail`, cada uno asociado a un `Medicine`
 
 ---
 
-## 📋 Scripts disponibles
+## Base de datos
+
+Configurado para **MySQL** por defecto. Los drivers de otras bases de datos están instalados:
+
+| Base de datos | Driver | Estado |
+|---|---|---|
+| MySQL | `mysql2` | Configurado por defecto |
+| PostgreSQL | `pg`, `pg-hstore` | Disponible — modifica el `dialect` en `src/database/db.ts` |
+| Oracle | `oracledb` | Disponible — modifica el `dialect` en `src/database/db.ts` |
+| SQL Server | `tedious` | Disponible — modifica el `dialect` en `src/database/db.ts` |
+
+---
+
+## Datos de prueba
+
+El proyecto incluye un script para poblar la base de datos con datos ficticios usando **Faker**.
+
+El orden de ejecución importa por las dependencias entre tablas:
+
+```
+1. Especialidades
+2. Médicos
+3. Pacientes
+4. Citas médicas
+5. Diagnósticos
+6. Procedimientos
+7. Medicamentos
+8. Prescripciones
+9. Detalle de prescripciones
+10. Pagos
+```
+
+Para ejecutar, descomenta las funciones en `src/faker/populate_data.ts` en orden y ejecuta:
+
+```bash
+npx ts-node src/faker/populate_data.ts
+```
+
+También puedes probar los endpoints con los archivos `.http` en `src/http/`, compatibles con la extensión **REST Client** de VS Code.
+
+---
+
+## Scripts disponibles
 
 | Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Inicia el servidor en modo desarrollo con recarga automática |
-| `npm run build` | Compila TypeScript a JavaScript |
+|---|---|
+| `npm run dev` | Servidor en modo desarrollo con recarga automática |
+| `npm run build` | Compila TypeScript a JavaScript en `dist/` |
 
 ---
 
-## 🤝 Contribución
+## Conocidos y mejoras pendientes
 
-1. Haz fork del repositorio.
-2. Crea una rama para tu feature: `git checkout -b feature/nueva-funcionalidad`
-3. Haz commit de tus cambios: `git commit -m "feat: descripción del cambio"`
-4. Sube la rama: `git push origin feature/nueva-funcionalidad`
-5. Abre un Pull Request.
+- Los endpoints de lista no tienen paginación — devuelven todos los registros
+- No hay validación de entrada en los controladores (recomendado: Zod o express-validator)
+- CORS está abierto a todos los orígenes — configurar con whitelist en producción
+- No hay tests automatizados
+- No hay documentación Swagger/OpenAPI
 
 ---
 
-## 📄 Licencia
+## Contribución
 
-Este proyecto es de uso académico. Universidad de La Guajira — Ingeniería de Sistemas.
+1. Haz fork del repositorio
+2. Crea una rama: `git checkout -b feature/nombre-del-cambio`
+3. Haz commit siguiendo Conventional Commits: `git commit -m "feat: descripción"`
+4. Sube la rama: `git push origin feature/nombre-del-cambio`
+5. Abre un Pull Request
+
+---
+
+## Licencia
+
+Proyecto académico — Universidad de La Guajira, Ingeniería de Sistemas.
