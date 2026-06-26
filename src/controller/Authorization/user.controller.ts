@@ -20,7 +20,7 @@ export class UserController {
         username,
         email,
         password,
-        is_active: status ?? "ACTIVO",
+        is_active: status ?? "ACTIVE",
         avatar,
       };
 

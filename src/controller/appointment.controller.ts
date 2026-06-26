@@ -12,7 +12,7 @@ export class AppointmentController {
             res.status(200).json({ appointment });
 
         } catch (error) {
-            res.status(200).json({ error: "error al mostrar citas" });
+            res.status(500).json({ error: "Error al obtener las citas" });
         }
     }
 

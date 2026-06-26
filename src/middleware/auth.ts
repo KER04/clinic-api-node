@@ -6,6 +6,7 @@ import { ResourceRole } from "../models/authorization/ResourceRole";
 import { Resource } from "../models/authorization/resource";
 import { RoleUser } from "../models/authorization/RoleUser";
 import { match } from "path-to-regexp";
+import { JWT_SECRET } from "../config/jwt";
 import "../models/authorization/relation"; // Importar relaciones
 
 declare global {
@@ -36,7 +37,7 @@ export const authMiddleware = async (
 
   try {
     // 🔐 Verificar el token principal
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as jwt.JwtPayload;
+    const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
 
     // 👤 Buscar el usuario activo
     const user = await User.findOne({

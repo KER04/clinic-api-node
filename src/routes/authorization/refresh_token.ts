@@ -5,7 +5,7 @@ export class RefreshTokenRoutes {
 
   public routes(app: Application): void {
     // ================== RUTAS SIN AUTENTICACIÓN ==================
-    app.route("/refresk-token")
+    app.route("/refresh-token")
       .get(this.refreshTokenController.getAllRefreshToken);
 
     // ================== RUTAS CON AUTENTICACIÓN ==================

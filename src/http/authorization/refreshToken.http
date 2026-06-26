@@ -4,6 +4,6 @@
 ### ================== RUTAS SIN AUTENTICACIÓN ==================
 
 ### Obtener todos los refresh tokens
-GET {{baseUrl}}/refresk-token
+GET {{baseUrl}}/refresh-token
 
 ### ================== RUTAS CON AUTENTICACIÓN ==================

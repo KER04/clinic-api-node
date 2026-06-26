@@ -1,9 +1,10 @@
 import dotenv from "dotenv";
 import express, { Application } from "express";
 import morgan from "morgan";
+import helmet from "helmet";
+import cors from "cors";
 import sequelize from "../database/db";
 import { Routes } from "../routes/index";
-var cors = require("cors"); // install en node y types
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -29,14 +30,30 @@ export class App {
   // Middleware configuration
   private middlewares(): void {
     this.app.use(morgan('dev'));
-    this.app.use(cors());
+    // Cabeceras de seguridad (oculta X-Powered-By, etc.)
+    this.app.use(helmet());
+    // CORS restringido: solo los orígenes definidos en CORS_ORIGIN (separados por coma).
+    // Si no se define, por defecto solo el frontend local de desarrollo.
+    this.app.use(cors({
+      origin: process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()) || ["http://localhost:4200"],
+      credentials: true,
+    }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
   }
 
   // Route configuration
   private routes(): void {
-    this.routePrv.doctorRoutes.routes(this.app); // de las rutas se llama el public 
+    // Health check: permite a monitores/Docker verificar que el servidor está vivo
+    this.app.get("/health", (_req, res) => {
+      res.json({
+        status: "ok",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    this.routePrv.doctorRoutes.routes(this.app); // de las rutas se llama el public
     this.routePrv.specialtyRoutes.routes(this.app);
     this.routePrv.appointmentRoutes.routes(this.app);
     this.routePrv.patientRoutes.routes(this.app);
@@ -68,7 +85,7 @@ export class App {
     }
   }
 
-  // Start the server xd
+  // Start the server 
   async listen() {
     await this.app.listen(this.app.get('port'));
     console.log('Server on port', this.app.get('port'));

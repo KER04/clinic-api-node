@@ -2,6 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import  sequelize  from "../../database/db";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from "../../config/jwt";
 
 export class User extends Model {
   id!: number;
@@ -16,14 +17,14 @@ export class User extends Model {
   }
 
   public generateToken(): string {
-    return jwt.sign({ id: this.id }, process.env.JWT_SECRET || 'secret', {
+    return jwt.sign({ id: this.id }, JWT_SECRET, {
       expiresIn: '60m',
     });
   }
 
   public generateRefreshToken(): { token: string, expiresAt: Date } {
     const expiresIn = '5m';
-    const token = jwt.sign({ id: this.id }, process.env.JWT_SECRET || 'secret', {
+    const token = jwt.sign({ id: this.id }, JWT_SECRET, {
       expiresIn,
     });
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -67,7 +68,7 @@ User.init(
   {
     tableName: "users",
     sequelize: sequelize,
-    timestamps: false,
+    timestamps: true, // createdAt / updatedAt para trazabilidad
     hooks: {
       beforeCreate: async (user: User) => {
         if (user.password) {

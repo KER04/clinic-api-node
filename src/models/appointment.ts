@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import  sequelize  from "../database/db";
 
 //citas
@@ -75,6 +75,6 @@ Appointment.init(
     sequelize,
     modelName: "Appointment",
     tableName: "appointments",
-    timestamps: false,
+    timestamps: true, // createdAt / updatedAt para trazabilidad
   }
 );

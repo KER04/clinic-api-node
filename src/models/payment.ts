@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import  sequelize  from "../database/db";
 //pagos
 export interface PaymentI {
@@ -104,6 +104,6 @@ Payment.init(
     sequelize,
     modelName: "Payment",
     tableName: "payments",
-    timestamps: false,
+    timestamps: true, // createdAt / updatedAt para trazabilidad
   }
 );

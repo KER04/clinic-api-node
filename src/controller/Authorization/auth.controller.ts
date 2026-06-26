@@ -7,7 +7,8 @@ export class AuthController {
       const { username, email, password, is_active, avatar } = req.body;
       const user_interface: User = await User.create({ username, email, password, is_active, avatar });
       const token = user_interface.generateToken();
-      res.status(201).json({ user_interface, token });
+      const { password: _password, ...safeUser } = user_interface.toJSON();
+      res.status(201).json({ user: safeUser, token });
     } catch (error) {
       res.status(500).json({ error: 'Error al registrar el usuario' });
     }
@@ -18,17 +19,18 @@ export class AuthController {
       const { email, password } = req.body;
       const user: User | null = await User.findOne(
         { 
-          where: { 
+          where: {
             email,
-            is_active: true 
-          } 
+            is_active: "ACTIVE"
+          }
       });
       if (!user || !(await user.checkPassword(password))) {
         res.status(401).json({ error: 'Credenciales inválidas' });
         return;
       }
       const token = user.generateToken();
-      res.status(200).json({ user, token });
+      const { password: _password, ...safeUser } = user.toJSON();
+      res.status(200).json({ user: safeUser, token });
     } catch (error) {
       res.status(500).json({ error: 'Error al iniciar sesión' });
     }

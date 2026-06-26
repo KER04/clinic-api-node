@@ -1,5 +1,6 @@
 import { Application } from "express";
 import { AuthController } from "../../controller/Authorization/auth.controller";
+import { loginLimiter } from "../../middleware/rateLimit";
 
 export class AuthRoutes {
   public authController: AuthController = new AuthController();
@@ -10,7 +11,7 @@ export class AuthRoutes {
       .post(this.authController.register);
 
     app.route("/api/login")
-      .post(this.authController.login);
+      .post(loginLimiter, this.authController.login);
 
     // ================== RUTAS CON AUTENTICACIÓN ==================
 
