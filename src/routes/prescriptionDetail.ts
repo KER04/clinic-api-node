@@ -1,6 +1,8 @@
 import { Application } from "express";
 import { PrescriptionDetailController } from "../controller/prescriptionDetail.controller";
 import { authMiddleware } from "../middleware/auth";
+import { validate } from "../middleware/validate";
+import { createPrescriptionDetailSchema, updatePrescriptionDetailSchema } from "../schemas/entities.schema";
 
 export class PrescriptionDetailRoutes {
 
@@ -9,21 +11,21 @@ export class PrescriptionDetailRoutes {
     public routes(app: Application): void {
         app.route("/api/prescriptionDetail/public")
             .get(this.prescriptionDetailController.getAllPrescriptionDetails)
-            .post(this.prescriptionDetailController.createPrescriptionDetail);
+            .post(validate(createPrescriptionDetailSchema), this.prescriptionDetailController.createPrescriptionDetail);
 
         app.route("/api/prescriptionDetail/public/:id")
             .get(this.prescriptionDetailController.getPrescriptionDetailById)
-            .put(this.prescriptionDetailController.updatePrescriptionDetail)
+            .put(validate(updatePrescriptionDetailSchema), this.prescriptionDetailController.updatePrescriptionDetail)
             .delete(this.prescriptionDetailController.deletePrescriptionDetail);
 
         // Rutas que requieren autenticación
         app.route("/api/prescriptionDetail")
             .get(authMiddleware, this.prescriptionDetailController.getAllPrescriptionDetails)
-            .post(authMiddleware, this.prescriptionDetailController.createPrescriptionDetail);
+            .post(authMiddleware, validate(createPrescriptionDetailSchema), this.prescriptionDetailController.createPrescriptionDetail);
 
         app.route("/api/prescriptionDetail/:id")
             .get(authMiddleware, this.prescriptionDetailController.getPrescriptionDetailById)
-            .put(authMiddleware, this.prescriptionDetailController.updatePrescriptionDetail)
+            .put(authMiddleware, validate(updatePrescriptionDetailSchema), this.prescriptionDetailController.updatePrescriptionDetail)
             .delete(authMiddleware, this.prescriptionDetailController.deletePrescriptionDetail);
     }
 }

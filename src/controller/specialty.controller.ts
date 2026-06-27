@@ -5,10 +5,22 @@ export class SpecialtyController {
   // Obtener todas las especialidades activas
   public async getAllSpecialties(req: Request, res: Response) {
     try {
-      const specialties = await Specialty.findAll({                                                       
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Specialty.findAndCountAll({
         where: { status: "ACTIVE" },
+        limit,
+        offset,
       });
-      res.status(200).json({ specialties });
+
+      res.status(200).json({
+        data: rows,
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+      });
     } catch (error) {
       console.error("Error al obtener especialidades:", error);
       res.status(500).json({ error: "Error al mostrar especialidades" });

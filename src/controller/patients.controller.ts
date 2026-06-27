@@ -5,10 +5,22 @@ export class PatientController {
     // Obtener todos los pacientes activos
     public async getAllPatients(req: Request, res: Response) {
         try {
-            const patients: PatientI[] = await Patient.findAll({
+            const page = Math.max(1, parseInt(req.query.page as string) || 1);
+            const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+            const offset = (page - 1) * limit;
+
+            const { count, rows } = await Patient.findAndCountAll({
                 where: { status: "ACTIVE" },
+                limit,
+                offset,
             });
-            res.status(200).json({ patients });
+
+            res.status(200).json({
+                data: rows,
+                total: count,
+                page,
+                totalPages: Math.ceil(count / limit),
+            });
         } catch (error) {
             console.error("Error al obtener pacientes:", error);
             res.status(500).json({ error: "Error al mostrar pacientes" });

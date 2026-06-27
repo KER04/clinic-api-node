@@ -5,10 +5,22 @@ export class ProcedureController {
   // Obtener todos los procedimientos activos (público)
   public async getAllProcedures(req: Request, res: Response) {
     try {
-      const procedures: ProcedureI[] = await Procedure.findAll({
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Procedure.findAndCountAll({
         where: { status: "ACTIVE" },
+        limit,
+        offset,
       });
-      res.status(200).json(procedures);
+
+      res.status(200).json({
+        data: rows,
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+      });
     } catch (error) {
       res.status(500).json({ error: "Error al mostrar procedimientos" });
     }
