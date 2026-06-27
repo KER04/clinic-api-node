@@ -3,8 +3,10 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
 import sequelize from "../database/db";
 import { Routes } from "../routes/index";
+import { swaggerSpec } from "./swagger";
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -44,6 +46,9 @@ export class App {
 
   // Route configuration
   private routes(): void {
+    // Documentación interactiva de la API (Swagger UI)
+    this.app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
     // Health check: permite a monitores/Docker verificar que el servidor está vivo
     this.app.get("/health", (_req, res) => {
       res.json({
