@@ -1,0 +1,36 @@
+name: CI
+
+# Cuándo se ejecuta: en cada push a main y en cada pull request hacia main
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descarga el código del repositorio
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Instala Node.js (con caché de npm para acelerar)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3. Instala las dependencias de forma reproducible (usa package-lock.json)
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Verifica que el proyecto compile (TypeScript)
+      - name: Build
+        run: npm run build
+
+      # 5. Corre la suite de tests
+      - name: Test
+        run: npm test
