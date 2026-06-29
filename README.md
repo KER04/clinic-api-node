@@ -6,6 +6,19 @@ API REST para la gestión integral de una **Institución Prestadora de Salud (IP
 
 ---
 
+## Características destacadas
+
+- **RBAC dinámico** — control de acceso por ruta y método HTTP, configurable desde la base de datos (con `path-to-regexp`), sin reiniciar el servidor.
+- **Autenticación JWT** con refresh tokens y contraseñas hasheadas con bcrypt.
+- **Seguridad de serie** — helmet (cabeceras), CORS con whitelist y rate-limiting en el login contra fuerza bruta.
+- **Validación de entrada con Zod** — esquemas por endpoint que rechazan datos malformados antes de tocar la base de datos.
+- **Paginación** en todos los listados (`?page` y `?limit`).
+- **Soft-deletes** — los registros se marcan `INACTIVE` en vez de borrarse, conservando el historial.
+- **Tests automatizados** con Jest (19 tests del RBAC y la validación, sin necesidad de base de datos).
+- **Documentación interactiva** de la API con Swagger/OpenAPI en `/api/docs`.
+
+---
+
 ## Tecnologías
 
 | Categoría | Tecnología |
@@ -16,8 +29,12 @@ API REST para la gestión integral de una **Institución Prestadora de Salud (IP
 | ORM | Sequelize 6 |
 | Base de datos | MySQL (también soporta PostgreSQL y Oracle) |
 | Autenticación | JWT (access token 60 min) + Refresh Tokens |
-| Seguridad | bcryptjs, RBAC dinámico con path-to-regexp |
-| Utilitarios | dotenv, cors, morgan, faker.js (seed) |
+| Autorización | RBAC dinámico con `path-to-regexp` |
+| Seguridad | bcryptjs, helmet, CORS con whitelist, express-rate-limit |
+| Validación | Zod (esquemas por endpoint) |
+| Testing | Jest + ts-jest (19 tests, sin BD) |
+| Documentación | Swagger / OpenAPI 3 (`/api/docs`) |
+| Utilitarios | dotenv, morgan, faker.js (seed) |
 
 ---
 
@@ -28,11 +45,20 @@ backend_node/
 ├── src/
 │   ├── server.ts                    # Punto de entrada
 │   ├── config/
-│   │   └── index.ts                 # Clase App: Express, middlewares, rutas, DB
+│   │   ├── index.ts                 # Clase App: Express, middlewares, rutas, DB
+│   │   ├── jwt.ts                   # Carga y valida JWT_SECRET (falla si no existe)
+│   │   └── swagger.ts               # Especificación OpenAPI 3
 │   ├── database/
 │   │   └── db.ts                    # Instancia de Sequelize
+│   ├── schemas/                     # Esquemas de validación con Zod
+│   │   ├── auth.schema.ts
+│   │   └── entities.schema.ts
 │   ├── middleware/
-│   │   └── auth.ts                  # Validación JWT + autorización RBAC
+│   │   ├── auth.ts                  # Validación JWT + autorización RBAC
+│   │   ├── validate.ts             # Middleware genérico de validación (Zod)
+│   │   ├── rateLimit.ts            # Rate limiting del login
+│   │   ├── auth.test.ts            # Tests del RBAC
+│   │   └── validate.test.ts        # Tests del middleware de validación
 │   ├── models/
 │   │   ├── index.ts                 # Relaciones entre modelos de dominio
 │   │   ├── doctor.ts
@@ -106,8 +132,11 @@ backend_node/
 │           └── ...
 ├── dist/                            # Salida compilada (generada por `npm run build`)
 ├── .env                             # Variables de entorno (no subir al repositorio)
+├── .env.example                     # Plantilla de variables (sin valores sensibles)
+├── jest.config.js                   # Configuración de Jest
 ├── package.json
 ├── tsconfig.json
+├── tsconfig.spec.json               # Configuración de TypeScript para los tests
 └── README.md
 ```
 
@@ -130,11 +159,18 @@ npm install
 
 ### 3. Configurar variables de entorno
 
-Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+Copia la plantilla `.env.example` a `.env` y completa los valores:
+
+```bash
+cp .env.example .env
+```
 
 ```env
 # Servidor
-PORT=4000
+PORT=3000
+
+# Orígenes permitidos para CORS (separados por coma)
+CORS_ORIGIN=http://localhost:4200
 
 # Base de datos (MySQL)
 DB_HOST=localhost
@@ -144,11 +180,12 @@ DB_PASS=tu_contraseña
 DB_NAME=ips_db
 DB_TIMEZONE=America/Bogota
 
-# JWT — usa un string largo y aleatorio, nunca 'secret'
+# JWT — OBLIGATORIO. El servidor no arranca sin esta variable.
+# Genera un secreto seguro con: openssl rand -hex 48
 JWT_SECRET=cambia_esto_por_un_secreto_seguro_de_al_menos_32_caracteres
 ```
 
-> **Importante:** Nunca subas `.env` al repositorio. Asegúrate de que está en `.gitignore`.
+> **Importante:** Nunca subas `.env` al repositorio (ya está en `.gitignore`). El servidor **falla al iniciar** si `JWT_SECRET` no está definido — es una protección intencional contra usar una clave insegura por defecto.
 
 ### 4. Crear la base de datos en MySQL
 
@@ -173,11 +210,11 @@ Usa `nodemon` + `ts-node` para recargar automáticamente al guardar cambios.
 ### Compilar para producción
 
 ```bash
-npm run build
-node dist/server.js
+npm run build   # compila TypeScript a dist/
+npm start       # ejecuta node dist/server.js
 ```
 
-> El script `start` no está definido en `package.json`. Tras compilar, ejecuta `node dist/server.js` directamente, o configura un gestor de procesos como PM2.
+> En producción se recomienda un gestor de procesos como **PM2** para reinicio automático.
 
 ---
 
@@ -224,9 +261,16 @@ Esto permite controlar permisos granulares por ruta y método, directamente desd
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `POST` | `/api/register` | Registro de nuevo usuario |
-| `POST` | `/api/login` | Inicio de sesión — devuelve token + refreshToken |
+| `POST` | `/api/register` | Registro de nuevo usuario (validado con Zod) |
+| `POST` | `/api/login` | Inicio de sesión — devuelve token + refreshToken (rate-limited: 5 intentos / 15 min) |
 | `GET` | `/refresh-token` | Renueva el access token usando el refreshToken |
+
+### Utilidad
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/health` | Health check (estado del servidor, uptime) |
+| `GET` | `/api/docs` | Documentación interactiva Swagger / OpenAPI |
 
 ### Patrón de rutas por módulo
 
@@ -234,15 +278,27 @@ Cada módulo de dominio expone dos grupos de rutas:
 
 ```
 # Rutas públicas (sin autenticación)
-GET    /api/<recurso>/public        → Listar todos
+GET    /api/<recurso>/public        → Listar (paginado: ?page=1&limit=20)
 GET    /api/<recurso>/public/:id    → Obtener por ID
 
 # Rutas protegidas (requieren JWT + RBAC)
-GET    /api/<recurso>               → Listar todos
+GET    /api/<recurso>               → Listar (paginado: ?page=1&limit=20)
 GET    /api/<recurso>/:id           → Obtener por ID
-POST   /api/<recurso>               → Crear
-PUT    /api/<recurso>/:id           → Actualizar
+POST   /api/<recurso>               → Crear (validado con Zod)
+PUT    /api/<recurso>/:id           → Actualizar (validado con Zod)
 DELETE /api/<recurso>/:id           → Eliminar (soft delete → INACTIVE)
+```
+
+Los listados devuelven un objeto paginado:
+
+```json
+{ "data": [ ... ], "total": 50, "page": 1, "totalPages": 3 }
+```
+
+Los `POST` y `PUT` validan el cuerpo con Zod; ante datos inválidos responden `400` con los errores por campo:
+
+```json
+{ "errors": { "email": ["El email no es válido"] } }
 ```
 
 ### Módulos de dominio
@@ -335,22 +391,32 @@ También puedes probar los endpoints con los archivos `.http` en `src/http/`, co
 
 ---
 
+## Testing
+
+Tests automatizados con **Jest + ts-jest**. Corren completamente con mocks, **sin necesidad de una base de datos**, por lo que funcionan en cualquier máquina y en CI.
+
+```bash
+npm test              # corre todos los tests
+npm run test:coverage # con reporte de cobertura
+```
+
+Cubren lo más crítico del proyecto:
+
+- **RBAC** (`authMiddleware` y `validateAuthorization`): rechazo sin token / token expirado / inválido / usuario inactivo (401), sin permiso (403) y acceso autorizado.
+- **Middleware de validación** y **esquemas de Zod** (login / register).
+
+---
+
 ## Scripts disponibles
 
 | Comando | Descripción |
 |---|---|
 | `npm run dev` | Servidor en modo desarrollo con recarga automática |
 | `npm run build` | Compila TypeScript a JavaScript en `dist/` |
-
----
-
-## Conocidos y mejoras pendientes
-
-- Los endpoints de lista no tienen paginación — devuelven todos los registros
-- No hay validación de entrada en los controladores (recomendado: Zod o express-validator)
-- CORS está abierto a todos los orígenes — configurar con whitelist en producción
-- No hay tests automatizados
-- No hay documentación Swagger/OpenAPI
+| `npm start` | Ejecuta la versión compilada (`dist/server.js`) |
+| `npm test` | Corre la suite de tests con Jest |
+| `npm run test:watch` | Tests en modo watch |
+| `npm run test:coverage` | Tests con reporte de cobertura |
 
 ---
 
