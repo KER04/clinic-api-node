@@ -1,6 +1,6 @@
 # Backend IPS — API REST
 
-[![CI](https://github.com/KER04/backend_node/actions/workflows/ci.yml/badge.svg)](https://github.com/KER04/backend_node/actions/workflows/ci.yml)
+[![CI](https://github.com/KER04/clinic-api-node/actions/workflows/ci.yml/badge.svg)](https://github.com/KER04/clinic-api-node/actions/workflows/ci.yml)
 
 API REST para la gestión integral de una **Institución Prestadora de Salud (IPS)**, desarrollada con **Node.js**, **TypeScript**, **Express** y **Sequelize ORM**. Incluye autenticación JWT con refresh tokens y control de acceso basado en roles (RBAC) dinámico.
 
@@ -149,7 +149,7 @@ backend_node/
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/KER04/backend_node.git
+git clone https://github.com/KER04/clinic-api-node.git
 cd backend_node
 ```
 
